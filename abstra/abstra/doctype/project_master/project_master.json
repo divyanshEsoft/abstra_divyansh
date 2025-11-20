@@ -1,0 +1,336 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:PROJ-{######}",
+ "creation": "2025-10-03 10:42:58.648991",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "company",
+  "project",
+  "project_name",
+  "po_items",
+  "skip_available_sub_assembly_item",
+  "combine_sub_items",
+  "sub_assembly_warehouse",
+  "get_sub_assembly_items",
+  "sub_assembly_items",
+  "section_break_sgyl",
+  "column_break_vjfk",
+  "include_non_stock_items",
+  "include_subcontracted_items",
+  "consider_minimum_order_qty",
+  "include_safety_stock",
+  "ignore_existing_ordered_qty",
+  "column_break_rznq",
+  "for_warehouse",
+  "get_items_for_mr",
+  "section_break_vokd",
+  "mr_items",
+  "section_break_ntiv",
+  "nesting_no",
+  "sheet_name",
+  "add_nesting_details",
+  "column_break_mqqs",
+  "nesting_qty",
+  "sheet_weight",
+  "net_weight",
+  "section_break_lgdr",
+  "nesting_item_details",
+  "add_nesting_items",
+  "section_break_iqdr",
+  "nesting_header",
+  "section_break_vxtf",
+  "nesting_items",
+  "final_summary_section",
+  "total_sheet_weight",
+  "total_scrap_weight",
+  "scrap_percentage_average",
+  "column_break_ubei",
+  "total_utilized_weight",
+  "highest_scrap_nesting_code"
+ ],
+ "fields": [
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Project",
+   "options": "Project",
+   "reqd": 1
+  },
+  {
+   "fieldname": "get_sub_assembly_items",
+   "fieldtype": "Button",
+   "label": "Get Sub Assembly Items"
+  },
+  {
+   "fieldname": "po_items",
+   "fieldtype": "Table",
+   "label": "Item",
+   "options": "Project Master Item"
+  },
+  {
+   "fieldname": "sub_assembly_warehouse",
+   "fieldtype": "Link",
+   "label": "Sub Assembly Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "default": "0",
+   "fieldname": "skip_available_sub_assembly_item",
+   "fieldtype": "Check",
+   "label": " Skip Available Sub Assembly Items"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sub_assembly_items",
+   "fieldtype": "Table",
+   "label": "Sub Assembly Items",
+   "options": "Project Master Sub Assembly Item"
+  },
+  {
+   "default": "0",
+   "fieldname": "combine_sub_items",
+   "fieldtype": "Check",
+   "label": " Consolidate Sub Assembly Items"
+  },
+  {
+   "fieldname": "nesting_item_details",
+   "fieldtype": "Table",
+   "label": "Nesting Item Details",
+   "options": "Project Master Nesting Item Details"
+  },
+  {
+   "fieldname": "section_break_ntiv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_mqqs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "add_nesting_details",
+   "fieldtype": "Button",
+   "label": "Add Nesting Details"
+  },
+  {
+   "fieldname": "nesting_no",
+   "fieldtype": "Data",
+   "label": "Nesting No"
+  },
+  {
+   "fieldname": "sheet_name",
+   "fieldtype": "Link",
+   "label": "Sheet Name",
+   "options": "Item"
+  },
+  {
+   "fieldname": "nesting_qty",
+   "fieldtype": "Int",
+   "label": "Nesting Qty"
+  },
+  {
+   "fetch_from": "sheet_name.custom_weight",
+   "fieldname": "sheet_weight",
+   "fieldtype": "Float",
+   "label": "Sheet Weight",
+   "precision": "3"
+  },
+  {
+   "fieldname": "net_weight",
+   "fieldtype": "Float",
+   "label": "Net Weight",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_lgdr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "add_nesting_items",
+   "fieldtype": "Button",
+   "label": "Add Nesting Items"
+  },
+  {
+   "fieldname": "section_break_iqdr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "nesting_header",
+   "fieldtype": "Table",
+   "label": "Nesting Header",
+   "options": "Project Master Nesting Header",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_vxtf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "nesting_items",
+   "fieldtype": "Table",
+   "label": "Nesting Items",
+   "options": "Project Master Sub Assembly Details",
+   "read_only": 1
+  },
+  {
+   "fieldname": "final_summary_section",
+   "fieldtype": "Section Break",
+   "label": "Final Summary"
+  },
+  {
+   "fieldname": "total_sheet_weight",
+   "fieldtype": "Float",
+   "label": "Total Sheet Weight",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_scrap_weight",
+   "fieldtype": "Float",
+   "label": "Total Scrap Weight",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "fieldname": "scrap_percentage_average",
+   "fieldtype": "Percent",
+   "label": "Scrap Percentage Average",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ubei",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_utilized_weight",
+   "fieldtype": "Float",
+   "label": "Total Utilized Weight",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "fieldname": "highest_scrap_nesting_code",
+   "fieldtype": "Data",
+   "label": "Highest Scrap Nesting code",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "project.project_name",
+   "fieldname": "project_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Project Name"
+  },
+  {
+   "fieldname": "section_break_sgyl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_rznq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_vjfk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "include_non_stock_items",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Include Non Stock Items"
+  },
+  {
+   "default": "1",
+   "fieldname": "include_subcontracted_items",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Include Subcontracted Items"
+  },
+  {
+   "default": "0",
+   "fieldname": "consider_minimum_order_qty",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Consider Minimum Order Qty"
+  },
+  {
+   "fieldname": "for_warehouse",
+   "fieldtype": "Link",
+   "label": " Raw Materials Warehouse ",
+   "options": "Warehouse"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_safety_stock",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Include Safety Stock in Required Qty Calculation"
+  },
+  {
+   "default": "0",
+   "description": "If enabled, the system will create material requests even if the stock exists in the 'Raw Materials Warehouse'.",
+   "fieldname": "ignore_existing_ordered_qty",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Ignore Available Stock"
+  },
+  {
+   "fieldname": "section_break_vokd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "mr_items",
+   "fieldtype": "Table",
+   "label": "Raw Materials",
+   "options": "Project Master Raw Material"
+  },
+  {
+   "fieldname": "get_items_for_mr",
+   "fieldtype": "Button",
+   "label": "Get Hardware / BO for Purchase"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-04 11:57:58.297689",
+ "modified_by": "Administrator",
+ "module": "Abstra",
+ "name": "Project Master",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "project_name"
+}

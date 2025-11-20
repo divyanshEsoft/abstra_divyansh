@@ -1,0 +1,99 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-10-24 16:51:36.967457",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "qty",
+  "net_qty",
+  "weight",
+  "net_weight",
+  "nesting_no",
+  "sheet_name",
+  "nesting_header_ref",
+  "nesting_parent_ref"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Qty"
+  },
+  {
+   "columns": 1,
+   "fieldname": "net_qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Net Qty"
+  },
+  {
+   "fieldname": "weight",
+   "fieldtype": "Float",
+   "label": "Weight",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "net_weight",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Net Weight",
+   "precision": "3",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "nesting_no",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Nesting No"
+  },
+  {
+   "columns": 1,
+   "fieldname": "sheet_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Sheet Name"
+  },
+  {
+   "fieldname": "nesting_header_ref",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Nesting Header Ref"
+  },
+  {
+   "fieldname": "nesting_parent_ref",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Nesting Parent Ref"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-10-24 16:51:36.967457",
+ "modified_by": "Administrator",
+ "module": "Abstra",
+ "name": "Production Plan Sub Assembly Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
