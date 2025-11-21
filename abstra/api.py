@@ -1,4 +1,3 @@
-
 import frappe
 from frappe.utils import flt
 
@@ -31,7 +30,7 @@ def get_item_history(item_code):
         LIMIT 10
     """
 
-    data = frappe.db.sql(query, {'item_code': item_code}, as_dict=True)
+    data = frappe.db.sql(query, {"item_code": item_code}, as_dict=True)
 
     return data
 
@@ -50,28 +49,30 @@ def get_project_fg_items(project_master, project_qty=1, delivery_date=None):
         for po_item in project_doc.po_items:
             rate = 0
 
-            bom_creator = frappe.db.get_value(
-                "BOM", po_item.bom_no, "bom_creator")
+            bom_creator = frappe.db.get_value("BOM", po_item.bom_no, "bom_creator")
             if bom_creator:
-                rate = frappe.db.get_value(
-                    "BOM Creator", bom_creator, "raw_material_cost") or 0
+                rate = (
+                    frappe.db.get_value("BOM Creator", bom_creator, "raw_material_cost")
+                    or 0
+                )
 
-            items.append({
-                "item_code": po_item.item_code,
-                "item_name": po_item.item_code,
-                "delivery_date": delivery_date,
-                "bom_no": po_item.bom_no,
-                "description": po_item.description,
-                "uom": po_item.stock_uom,
-                "custom_project_qty": po_item.planned_qty,
-                "rate": flt(rate),
-                "custom_costing_rate": flt(rate),
-                "qty": project_qty * flt(po_item.planned_qty),
-                "amount": flt(rate) * flt(project_qty * flt(po_item.planned_qty)),
-                "custom_project_master": project_master,
-                "custom_project_master_item_reference": po_item.name
-
-            })
+            items.append(
+                {
+                    "item_code": po_item.item_code,
+                    "item_name": po_item.item_code,
+                    "delivery_date": delivery_date,
+                    "bom_no": po_item.bom_no,
+                    "description": po_item.description,
+                    "uom": po_item.stock_uom,
+                    "custom_project_qty": po_item.planned_qty,
+                    "rate": flt(rate),
+                    "custom_costing_rate": flt(rate),
+                    "qty": project_qty * flt(po_item.planned_qty),
+                    "amount": flt(rate) * flt(project_qty * flt(po_item.planned_qty)),
+                    "custom_project_master": project_master,
+                    "custom_project_master_item_reference": po_item.name,
+                }
+            )
 
         return {"success": True, "items": items, "project": project_doc.project}
 

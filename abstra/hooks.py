@@ -44,10 +44,10 @@ app_license = "mit"
 
 # include js in doctype views
 doctype_js = {
-    "Purchase Order" : "public/js/purchase_order.js",
-    "Sales Order" : "public/js/sales_order.js",
-    "Production Plan" : "public/js/production_plan.js",
-    }
+    "Purchase Order": "public/js/purchase_order.js",
+    "Sales Order": "public/js/sales_order.js",
+    "Production Plan": "public/js/production_plan.js",
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -134,7 +134,7 @@ doctype_js = {
 # Override standard doctype classes
 
 override_doctype_class = {
-	"Production Plan": "abstra.public.py.production_plan.ProductionPlanOverride"
+    "Production Plan": "abstra.public.py.production_plan.ProductionPlanOverride"
 }
 
 # Document Events
@@ -142,12 +142,12 @@ override_doctype_class = {
 # Hook on document methods and events
 
 doc_events = {
-	"Sales Order" : {
-		"on_submit": "abstra.overrides.sales_order.on_submit",
-	},
-    "Production Plan" : {
-		"on_submit": "abstra.overrides.production_plan.on_submit",
-	}
+    "Sales Order": {
+        "on_submit": "abstra.overrides.sales_order.on_submit",
+    },
+    "Production Plan": {
+        "on_submit": "abstra.overrides.production_plan.on_submit",
+    },
 }
 
 # Scheduled Tasks

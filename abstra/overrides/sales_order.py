@@ -3,15 +3,19 @@ from erpnext.manufacturing.doctype.bom.bom import get_bom_items_as_dict
 from frappe.utils import cint, nowdate, flt, add_days
 from frappe.email.doctype.email_template.email_template import get_email_template
 
+
 def on_submit(doc, method=None):
     frappe.enqueue(
         create_purchase_orders,
         doc=doc,
         queue="long",
-        timeout=300,  
-        job_name=f"Create PO for Sales Order {doc.name}"
+        timeout=300,
+        job_name=f"Create PO for Sales Order {doc.name}",
     )
-    frappe.msgprint(f"Background job started for creating Purchase Orders for {doc.name}")
+    frappe.msgprint(
+        f"Background job started for creating Purchase Orders for {doc.name}"
+    )
+
 
 def create_purchase_orders(doc):
     warehouse = (
@@ -30,11 +34,15 @@ def create_purchase_orders(doc):
     for so_item in doc.items:
         item_code = so_item.item_code
         qty = so_item.qty
-        bom_no = so_item.bom_no or frappe.db.get_value("Item", item_code, "default_bom", cache=True)
+        bom_no = so_item.bom_no or frappe.db.get_value(
+            "Item", item_code, "default_bom", cache=True
+        )
         if not bom_no:
             required_items[item_code] = required_items.get(item_code, 0) + qty
         else:
-            bom_items = get_bom_items_as_dict(bom_no, doc.company, qty=qty, fetch_exploded=True)
+            bom_items = get_bom_items_as_dict(
+                bom_no, doc.company, qty=qty, fetch_exploded=True
+            )
             for code, detail in bom_items.items():
                 required_items[code] = required_items.get(code, 0) + detail["qty"]
 
@@ -42,7 +50,7 @@ def create_purchase_orders(doc):
     for item_code, required_qty in required_items.items():
         item = frappe.get_doc("Item", item_code)
         if not item.is_purchase_item:
-            continue 
+            continue
 
         reorder_level = 0
         reorder_qty = 0
@@ -63,18 +71,22 @@ def create_purchase_orders(doc):
         order_qty = required_qty
         if stock < reorder_level:
             # order_qty += (reorder_level - stock) + reorder_qty
-            order_qty +=  reorder_qty
+            order_qty += reorder_qty
         order_qty = max(order_qty, min_order_qty)
 
         if order_qty > 0:
-            to_order[item_code] = {"qty": order_qty, "item": item, "required_qty": required_qty}
+            to_order[item_code] = {
+                "qty": order_qty,
+                "item": item,
+                "required_qty": required_qty,
+            }
 
-    supplier_items = {}  
-    no_supplier_items = []  
+    supplier_items = {}
+    no_supplier_items = []
 
     for item_code, data in to_order.items():
         item = data["item"]
-        if not item.get("supplier_items"): 
+        if not item.get("supplier_items"):
             no_supplier_items.append(f"{item_code} (no supplier)")
             continue
 
@@ -122,7 +134,7 @@ def create_purchase_orders(doc):
             if fallback_data:
                 best_supplier = fallback_data[0].supplier
                 best_rate = flt(fallback_data[0].min_rate)
-                best_date = nowdate()  
+                best_date = nowdate()
             else:
                 no_supplier_items.append(f"{item_code} (no purchase history)")
                 continue
@@ -152,7 +164,7 @@ def create_purchase_orders(doc):
                 "schedule_date": schedule_date,
                 "set_warehouse": warehouse,
                 "items": [],
-                "sales_order": doc.name,  
+                "sales_order": doc.name,
             }
         )
         for it in items:
@@ -174,42 +186,48 @@ def create_purchase_orders(doc):
 
         if supplier_doc.custom_auto_generate_mail:
             send_po_email(po, supplier_doc)
-    frappe.db.commit()  
+    frappe.db.commit()
 
     field_value = ", ".join(sorted(set(no_supplier_items))) if no_supplier_items else ""
     doc.db_set("custom_purchase_order_record", field_value, update_modified=False)
+
 
 def send_po_email(po, supplier_doc):
     """Send PO email using Email Template or fallback HTML. Better email lookup."""
     try:
         email = supplier_doc.email_id
         if not email:
-            contacts = frappe.get_all("Contact Email", {
-                "parenttype": "Supplier",
-                "parent": supplier_doc.name,
-                "email_id": ["!=", ""]
-            }, "email_id", limit=1)
+            contacts = frappe.get_all(
+                "Contact Email",
+                {
+                    "parenttype": "Supplier",
+                    "parent": supplier_doc.name,
+                    "email_id": ["!=", ""],
+                },
+                "email_id",
+                limit=1,
+            )
             if contacts:
                 email = contacts[0].email_id
 
         if not email:
             error_msg = f"No email found for Supplier {supplier_doc.name}. Set 'email_id' on Supplier or link a Contact with email."
             frappe.log_error(error_msg, "PO Email: No Email Found")
-            frappe.throw(error_msg, title="Email Not Found")  
+            frappe.throw(error_msg, title="Email Not Found")
 
         subject = f"Purchase Order {po.name} from {po.company}"
 
         attachments = [
-					{
-						"doctype": "Purchase Order",
-						"name": po.name,
-						"print_format": "Purchase Order Chapparia",
-						"print_format_attachment": 1,
-					}
+            {
+                "doctype": "Purchase Order",
+                "name": po.name,
+                "print_format": "Purchase Order Chapparia",
+                "print_format_attachment": 1,
+            }
         ]
 
         template_name = "Purchase Order"
-       
+
         if frappe.db.exists("Email Template", template_name):
             rendered = get_email_template(template_name, po.as_dict())
             frappe.sendmail(
@@ -221,7 +239,7 @@ def send_po_email(po, supplier_doc):
                 reference_name=po.name,
                 now=True,
                 retry=3,
-                add_unsubscribe_link=False
+                add_unsubscribe_link=False,
             )
         else:
             items_html = ""
@@ -250,22 +268,26 @@ def send_po_email(po, supplier_doc):
             """
 
             frappe.sendmail(
-					recipients=[email],
-					subject=subject,
-					message=message,
-					attachments=attachments,
-					reference_doctype="Purchase Order",
-					reference_name=po.name,
-					now=True,
-                    retry=3,
-                    add_unsubscribe_link=False
-				)
+                recipients=[email],
+                subject=subject,
+                message=message,
+                attachments=attachments,
+                reference_doctype="Purchase Order",
+                reference_name=po.name,
+                now=True,
+                retry=3,
+                add_unsubscribe_link=False,
+            )
 
-        frappe.msgprint(f"Email sent successfully to {email} for PO {po.name}", indicator="green")
+        frappe.msgprint(
+            f"Email sent successfully to {email} for PO {po.name}", indicator="green"
+        )
 
     except frappe.ValidationError as ve:
         frappe.throw(ve)
     except Exception as e:
-        error_msg = f"Failed to send PO email for {po.name} to {email or 'unknown'}: {str(e)}"
+        error_msg = (
+            f"Failed to send PO email for {po.name} to {email or 'unknown'}: {str(e)}"
+        )
         frappe.log_error(error_msg, "PO Email Send Failed")
         frappe.msgprint(error_msg, indicator="red", title="Email Send Failed")

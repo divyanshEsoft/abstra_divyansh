@@ -1,6 +1,7 @@
 import frappe
 
-def on_submit(self, method=None):    
+
+def on_submit(self, method=None):
     if not self.custom_sales_order:
         return
 
@@ -26,7 +27,7 @@ def on_submit(self, method=None):
         original_pending = frappe.db.get_value(
             "Sales Order Project Master",
             selected_row.project_master_ref_sales_order,
-            "pending_qty"
+            "pending_qty",
         )
 
         if original_pending is None:
@@ -44,7 +45,7 @@ def on_submit(self, method=None):
             "Sales Order Project Master",
             selected_row.project_master_ref_sales_order,
             "pending_qty",
-            new_pending
+            new_pending,
         )
 
         frappe.msgprint(
@@ -55,5 +56,3 @@ def on_submit(self, method=None):
 
     except frappe.DoesNotExistError:
         frappe.throw(f"Linked Sales Order {self.custom_sales_order} not found.")
-
-
