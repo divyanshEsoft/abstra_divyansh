@@ -113,9 +113,27 @@ class ProjectMaster(Document):
         warehouses: DF.TableMultiSelect[ProductionPlanMaterialRequestWarehouse]
     # end: auto-generated types
 
+    # def validate(self):
+    #     self.set_pending_qty_in_row_without_reference()
+    #     self.calculate_total_planned_qty()
+    #     self.set_status()
+    #     self._rename_temporary_references()
+    #     validate_uom_is_integer(self, "stock_uom", "planned_qty")
+    #     self.validate_sales_orders()
+    #     self.validate_material_request_type()
+
     def validate(self):
         self.set_pending_qty_in_row_without_reference()
         self.calculate_total_planned_qty()
+
+        # NEW: ensure total_produced_qty is calculated before status logic
+        # This guarantees the attribute exists and holds a numeric value.
+        try:
+            self.calculate_total_produced_qty()
+        except Exception:
+            # If calculation fails for any reason, ensure default 0 so set_status() won't crash
+            self.total_produced_qty = 0
+
         self.set_status()
         self._rename_temporary_references()
         validate_uom_is_integer(self, "stock_uom", "planned_qty")
@@ -1019,108 +1037,6 @@ class ProjectMaster(Document):
             msgprint(_("{0} created").format(comma_and(material_request_list)))
         else:
             msgprint(_("No material request created"))
-
-    # @frappe.whitelist()
-    # def get_sub_assembly_items(self, manufacturing_type=None):
-    #     "Fetch sub assembly items and optionally combine them."
-    #     self.sub_assembly_items = []
-    #     sub_assembly_items_store = (
-    #         []
-    #     )  # temporary store to process all subassembly items
-    #     bin_details = frappe._dict()
-
-    #     # CHANGED: Initialize a set to track processed items to avoid duplicates
-    #     processed_items = set()
-
-    #     for row in self.po_items:
-    #         if (
-    #             self.skip_available_sub_assembly_item
-    #             and not self.sub_assembly_warehouse
-    #         ):
-    #             frappe.throw(
-    #                 _("Row #{0}: Please select the Sub Assembly Warehouse").format(
-    #                     row.idx
-    #                 )
-    #             )
-
-    #         if not row.item_code:
-    #             frappe.throw(
-    #                 _("Row #{0}: Please select Item Code in Assembly Items").format(
-    #                     row.idx
-    #                 )
-    #             )
-
-    #         if not row.bom_no:
-    #             frappe.throw(
-    #                 _("Row #{0}: Please select the BOM No in Assembly Items").format(
-    #                     row.idx
-    #                 )
-    #             )
-
-    #         bom_data = []
-
-    #         get_sub_assembly_items(
-    #             [item.production_item for item in sub_assembly_items_store],
-    #             bin_details,
-    #             row.bom_no,
-    #             bom_data,
-    #             row.planned_qty,
-    #             self.company,
-    #             warehouse=self.sub_assembly_warehouse,
-    #             skip_available_sub_assembly_item=self.skip_available_sub_assembly_item,
-    #         )
-
-    #         # DEBUG THINGS
-    #         frappe.msgprint(
-    #             f"Found {len(bom_data)} sub-assembly items from BOM {row.bom_no}"
-    #         )
-
-    #         self.set_sub_assembly_items_based_on_level(
-    #             row, bom_data, manufacturing_type
-    #         )
-
-    #         # CHANGED: Filter out duplicates before adding to store
-    #         for item in bom_data:
-    #             item_key = (
-    #                 item.get("production_item"),
-    #                 item.get("bom_no"),
-    #                 item.get("parent_item_code"),
-    #             )
-    #             frappe.msgprint(f"Checking item: {item_key}")  # Debug
-    #             if item_key not in processed_items:
-    #                 sub_assembly_items_store.append(item)
-    #                 processed_items.add(item_key)
-    #                 frappe.msgprint(f"Added new item: {item_key}")  # Debug
-    #             else:
-    #                 frappe.msgprint(f"Skipped duplicate item: {item_key}")  # Debug
-
-    #             if (
-    #                 not sub_assembly_items_store
-    #                 and self.skip_available_sub_assembly_item
-    #             ):
-    #                 message = (
-    #                     _(
-    #                         "As there are sufficient Sub Assembly Items, Work Order is not required for Warehouse {0}."
-    #                     ).format(self.sub_assembly_warehouse)
-    #                     + "<br><br>"
-    #                 )
-    #             message += _(
-    #                 "If you still want to proceed, please disable 'Skip Available Sub Assembly Items' checkbox."
-    #             )
-
-    #             frappe.msgprint(message, title=_("Note"))
-
-    #             if self.combine_sub_items:
-    #                 # Combine subassembly items
-    #                 sub_assembly_items_store = self.combine_subassembly_items(
-    #                     sub_assembly_items_store
-    #                 )
-
-    #             for idx, row in enumerate(sub_assembly_items_store):
-    #                 row.idx = idx + 1
-    #             self.append("sub_assembly_items", row)
-
-    #             self.set_default_supplier_for_subcontracting_order()
 
     @frappe.whitelist()
     def get_sub_assembly_items(self, manufacturing_type=None):
